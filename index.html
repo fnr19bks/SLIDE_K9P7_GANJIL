@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMS/Blog dan Etika Publikasi — Informatika Kelas IX</title>
+<style>
+:root{
+  --bg:#08172A; --bg2:#0F2A45;
+  --card:rgba(255,255,255,.07); --line:rgba(52,211,153,.28);
+  --accent:#34D399; --accent2:#FB923C; --accent3:#60A5FA; --pink:#F472B6;
+  --text:#EAF3FC; --muted:#9FB8D4;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  height:100%;width:100%;overflow:hidden;background:#050F1C;
+  font-family:"Segoe UI",Inter,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  color:var(--text);
+  display:grid;place-items:center;
+}
+#stage{
+  width:1280px;height:720px;position:relative;overflow:hidden;
+  transform:scale(var(--s,1));transform-origin:center center;
+  border-radius:6px;box-shadow:0 30px 90px rgba(0,0,0,.75);
+  background:var(--bg);
+}
+
+/* ============ SLIDE ============ */
+.slide{
+  position:absolute;inset:0;padding:40px 56px 58px;
+  display:flex;flex-direction:column;
+  opacity:0;pointer-events:none;overflow:hidden;
+  background:
+    radial-gradient(1100px 560px at 12% -12%, rgba(52,211,153,.16), transparent 62%),
+    radial-gradient(900px 520px at 112% 112%, rgba(251,146,60,.14), transparent 60%),
+    radial-gradient(700px 420px at 88% 8%, rgba(96,165,250,.10), transparent 65%),
+    linear-gradient(140deg,#08172A 0%,#0F2A45 52%,#08172A 100%);
+}
+.slide::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(620px 320px at var(--mx,50%) var(--my,50%), rgba(96,165,250,.10), transparent 70%);
+  transition:background .25s linear;
+}
+.slide::before{
+  content:"";position:absolute;inset:-40% -10% auto -10%;height:70%;
+  background:conic-gradient(from 210deg at 30% 20%, rgba(52,211,153,.10), transparent 40%, rgba(244,114,182,.08) 70%, transparent 100%);
+  filter:blur(30px);pointer-events:none;animation:drift 22s linear infinite;
+}
+@keyframes drift{0%{transform:translate3d(0,0,0) rotate(0)}50%{transform:translate3d(2%,3%,0) rotate(6deg)}100%{transform:translate3d(0,0,0) rotate(0)}}
+.slide.active{opacity:1;pointer-events:auto}
+
+/* transitions */
+.slide.a0{animation:a0 .55s cubic-bezier(.2,.8,.25,1) both}
+.slide.a1{animation:a1 .55s cubic-bezier(.2,.8,.25,1) both}
+.slide.a2{animation:a2 .55s cubic-bezier(.2,.8,.25,1) both}
+.slide.a3{animation:a3 .6s cubic-bezier(.2,.8,.25,1) both}
+.slide.a4{animation:a4 .6s cubic-bezier(.2,.8,.25,1) both}
+.slide.a5{animation:a5 .6s cubic-bezier(.2,.8,.25,1) both}
+.slide.a6{animation:a6 .6s cubic-bezier(.2,.8,.25,1) both}
+.slide.a7{animation:a7 .6s cubic-bezier(.2,.8,.25,1) both}
+@keyframes a0{from{opacity:0;transform:translateX(100px)}to{opacity:1;transform:none}}
+@keyframes a1{from{opacity:0;transform:translateX(-100px)}to{opacity:1;transform:none}}
+@keyframes a2{from{opacity:0;transform:scale(.86)}to{opacity:1;transform:none}}
+@keyframes a3{from{opacity:0;transform:perspective(1400px) rotateY(30deg)}to{opacity:1;transform:none}}
+@keyframes a4{from{opacity:0;filter:blur(18px)}to{opacity:1;filter:blur(0)}}
+@keyframes a5{from{clip-path:inset(0 100% 0 0);opacity:1}to{clip-path:inset(0 0 0 0);opacity:1}}
+@keyframes a6{from{opacity:0;transform:translateY(80px) scale(.95)}to{opacity:1;transform:none}}
+@keyframes a7{from{opacity:0;transform:rotate(-3.5deg) scale(.9)}to{opacity:1;transform:none}}
+
+/* ============ REVEAL ============ */
+.f{opacity:0;transform:translateY(16px);transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.3,1)}
+.f.show{opacity:1;transform:none}
+
+/* ============ TIPOGRAFI ============ */
+.eyebrow{
+  font-size:13px;font-weight:800;letter-spacing:2.6px;text-transform:uppercase;
+  color:var(--accent);display:flex;align-items:center;gap:10px;margin-bottom:6px;
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:linear-gradient(90deg,var(--accent),transparent);border-radius:2px}
+h1.title{font-size:62px;font-weight:800;line-height:1.06;letter-spacing:-1.4px}
+h2.title{font-size:38px;font-weight:800;line-height:1.14;letter-spacing:-.6px;margin-bottom:14px}
+.sub{font-size:23px;color:var(--muted);line-height:1.45}
+.lead{font-size:23px;color:#D6E7F8;line-height:1.5;margin-bottom:10px}
+.hl{color:var(--accent);font-weight:700}
+.hl2{color:var(--accent2);font-weight:700}
+.hl3{color:var(--accent3);font-weight:700}
+.grad{
+  background:linear-gradient(100deg,#34D399 0%,#60A5FA 45%,#F472B6 90%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.body{flex:1;display:flex;flex-direction:column;gap:14px;position:relative;z-index:2}
+
+/* ============ LIST ============ */
+ul.bullets{list-style:none;display:flex;flex-direction:column;gap:11px}
+ul.bullets li{
+  position:relative;padding-left:38px;font-size:23px;line-height:1.4;color:#DCEAF8;
+}
+ul.bullets li::before{
+  content:"▸";position:absolute;left:8px;top:-1px;color:var(--accent);font-size:22px;font-weight:900;
+}
+ul.bullets.gold li::before{color:var(--accent2)}
+ul.bullets.blue li::before{color:var(--accent3)}
+
+ol.steps{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:10px}
+ol.steps li{
+  counter-increment:s;position:relative;padding-left:56px;font-size:21px;line-height:1.35;color:#DCEAF8;
+}
+ol.steps li::before{
+  content:counter(s);position:absolute;left:0;top:-3px;width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));color:#06231A;
+  font-weight:900;font-size:17px;display:grid;place-items:center;
+  box-shadow:0 6px 18px rgba(52,211,153,.28);
+}
+ol.steps li b{color:#fff}
+
+/* ============ GRID & CARD ============ */
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.card{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:16px 18px;position:relative;overflow:hidden;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);opacity:.85}
+.card h3{font-size:20px;font-weight:800;margin-bottom:7px;color:#F2FAFF;letter-spacing:-.2px}
+.card p,.card li{font-size:18px;line-height:1.42;color:#CFE1F3}
+.card ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.card ul li{padding-left:16px;position:relative}
+.card ul li::before{content:"•";position:absolute;left:2px;color:var(--accent)}
+.card.gold{border-color:rgba(251,146,60,.36)}
+.card.gold::before{background:var(--accent2)}
+.card.blue{border-color:rgba(96,165,250,.36)}
+.card.blue::before{background:var(--accent3)}
+.card.pink{border-color:rgba(244,114,182,.36)}
+.card.pink::before{background:var(--pink)}
+.icon{font-size:30px;line-height:1;margin-bottom:8px;display:block}
+
+/* ============ CHIP & BADGE ============ */
+.chip{
+  display:inline-block;padding:6px 15px;border-radius:999px;font-size:16px;font-weight:700;
+  background:rgba(52,211,153,.14);border:1px solid rgba(52,211,153,.38);color:#A6F5DA;
+}
+.chip.orange{background:rgba(251,146,60,.14);border-color:rgba(251,146,60,.42);color:#FFD6B0}
+.chip.blue{background:rgba(96,165,250,.14);border-color:rgba(96,165,250,.42);color:#C2DCFF}
+.chip.pink{background:rgba(244,114,182,.14);border-color:rgba(244,114,182,.42);color:#FFC8E5}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.badge{
+  display:inline-block;padding:9px 20px;border-radius:12px;font-size:17px;font-weight:700;
+  background:linear-gradient(135deg,rgba(52,211,153,.18),rgba(96,165,250,.16));
+  border:1px solid rgba(52,211,153,.42);color:#D9FBF0;
+}
+
+/* ============ CODE ============ */
+.code{
+  font-family:"Consolas","Courier New",monospace;
+  background:rgba(4,14,26,.78);border-left:4px solid var(--accent);border-radius:10px;
+  padding:13px 18px;font-size:17px;line-height:1.5;color:#A8F0D4;
+  white-space:pre-wrap;word-break:break-word;
+}
+.code.sm{font-size:14.5px;line-height:1.45}
+.code .k{color:#F472B6}
+.code .s{color:#FBBF24}
+.code .c{color:#7C93AE}
+
+/* ============ FLOW ============ */
+.flow{display:flex;flex-direction:column;align-items:center;gap:3px}
+.node{
+  background:rgba(52,211,153,.13);border:1.5px solid rgba(52,211,153,.48);
+  border-radius:12px;padding:9px 22px;font-size:17px;font-weight:700;color:#DFF7EE;text-align:center;
+}
+.node.oval{border-radius:999px;background:rgba(96,165,250,.14);border-color:rgba(96,165,250,.5);color:#D6E9FF}
+.node.diamond{
+  width:96px;height:96px;transform:rotate(45deg);border-radius:10px;
+  background:rgba(251,146,60,.14);border-color:rgba(251,146,60,.55);
+  display:grid;place-items:center;padding:0;color:#FFE3C7;
+}
+.node.diamond span{transform:rotate(-45deg);display:block;width:104px;font-size:13.5px;line-height:1.2;text-align:center}
+.arrow{color:var(--accent);font-size:17px;line-height:1;opacity:.85}
+.branchLabel{
+  font-size:15px;font-weight:700;padding:6px 13px;border-radius:9px;
+  background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.22);color:#CFE1F3;
+}
+.branchLabel.y{border-color:rgba(251,146,60,.55);color:#FFD6B0}
+.branchLabel.n{border-color:rgba(96,165,250,.55);color:#C2DCFF}
+.branches{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+
+/* ============ TIMELINE ============ */
+.timeline{position:relative;padding-left:34px;display:flex;flex-direction:column;gap:13px}
+.timeline::before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:2px;background:linear-gradient(180deg,var(--accent),var(--accent3),var(--pink))}
+.tl{position:relative;font-size:19px;line-height:1.4;color:#D8E8F8}
+.tl::before{
+  content:"";position:absolute;left:-31px;top:6px;width:12px;height:12px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 0 4px rgba(52,211,153,.18);
+}
+.tl b{color:#fff}
+.tl.bad::before{background:var(--accent2);box-shadow:0 0 0 4px rgba(251,146,60,.18)}
+.tl.good::before{background:var(--accent3);box-shadow:0 0 0 4px rgba(96,165,250,.18)}
+
+/* ============ TABLE ============ */
+table{width:100%;border-collapse:collapse;font-size:17px;border-radius:12px;overflow:hidden}
+th{
+  background:rgba(52,211,153,.16);color:#BDF7E1;text-align:left;
+  padding:10px 13px;border:1px solid rgba(52,211,153,.26);
+  font-size:15.5px;letter-spacing:.4px;font-weight:800;
+}
+td{padding:9px 13px;border:1px solid rgba(255,255,255,.08);color:#D5E5F5;line-height:1.35}
+tbody tr:nth-child(odd){background:rgba(255,255,255,.04)}
+table.sm{font-size:14.5px}
+table.sm th{font-size:13.5px;padding:8px 10px}
+table.sm td{padding:7px 10px}
+
+/* ============ BUBBLE ============ */
+.bubble{
+  position:relative;border-radius:20px;padding:20px 26px;font-size:24px;line-height:1.4;color:#EAF6FF;
+  background:linear-gradient(135deg,rgba(96,165,250,.20),rgba(52,211,153,.13));
+  border:1px solid rgba(96,165,250,.48);
+}
+.bubble::after{
+  content:"";position:absolute;left:44px;bottom:-13px;
+  border-left:13px solid transparent;border-right:13px solid transparent;
+  border-top:13px solid rgba(96,165,250,.42);
+}
+.bubble b{color:#BFF5E3}
+
+/* ============ COVER ============ */
+.cover-inner{
+  flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;gap:20px;position:relative;z-index:3;
+}
+.cover-inner h1.title{max-width:1050px}
+.cover-inner .sub{max-width:820px}
+.cover-inner .row{justify-content:center}
+
+/* ============ FOOT / TIME ============ */
+.foot{
+  position:absolute;left:56px;bottom:16px;font-size:14px;color:var(--muted);
+  letter-spacing:.6px;z-index:3;display:flex;gap:14px;align-items:center;
+}
+.foot .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+
+/* ============ HUD / KONTROL ============ */
+#hud{
+  position:fixed;top:16px;right:22px;z-index:60;
+  font-size:15px;font-weight:800;letter-spacing:1.2px;color:#B9D6F2;
+  background:rgba(8,23,42,.72);border:1px solid rgba(52,211,153,.28);
+  padding:7px 15px;border-radius:999px;backdrop-filter:blur(8px);
+}
+#bar{
+  position:fixed;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.07);z-index:60;
+}
+#bar i{
+  display:block;height:100%;width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent3),var(--pink));
+  transition:width .4s cubic-bezier(.2,.8,.3,1);
+  box-shadow:0 0 14px rgba(52,211,153,.6);
+}
+#hint{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;
+  font-size:15px;color:#CBE2F7;background:rgba(8,23,42,.78);
+  border:1px solid rgba(96,165,250,.35);padding:9px 20px;border-radius:999px;
+  backdrop-filter:blur(8px);transition:opacity .4s ease;letter-spacing:.4px;
+  animation:pulseHint 2.4s ease-in-out infinite;
+}
+@keyframes pulseHint{0%,100%{opacity:.72}50%{opacity:1}}
+#hint.hide{opacity:0;pointer-events:none;animation:none}
+.ctrl{
+  position:fixed;right:22px;bottom:26px;z-index:60;display:flex;gap:10px;
+}
+.ctrl button{
+  width:46px;height:46px;border-radius:14px;cursor:pointer;
+  background:rgba(8,23,42,.82);color:#D7ECFF;border:1px solid rgba(52,211,153,.35);
+  font-size:18px;display:grid;place-items:center;
+  transition:transform .18s ease,background .18s ease,border-color .18s ease;
+  backdrop-filter:blur(8px);
+}
+.ctrl button:hover{transform:translateY(-3px);background:rgba(52,211,153,.18);border-color:var(--accent)}
+.ctrl button:active{transform:scale(.94)}
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- ================= SLIDE 1 : COVER ================= -->
+  <!-- Catatan Guru: Buka kelas, sapa murid, tanyakan kesiapan. Klik layar untuk memunculkan tiap elemen. -->
+  <section class="slide cover">
+    <div class="cover-inner">
+      <div class="f chip blue">SMP NEGERI 19 KOTA BEKASI</div>
+      <h1 class="title grad f">CMS/Blog &amp; Etika Publikasi</h1>
+      <p class="sub f">Menulis, menata, dan mempublikasikan konten digital dengan rapi dan bertanggung jawab</p>
+      <div class="row f">
+        <span class="chip">Informatika</span>
+        <span class="chip orange">Kelas IX / Fase D</span>
+        <span class="chip blue">Discovery Learning</span>
+        <span class="chip pink">2 × 40 menit</span>
+      </div>
+      <div class="f badge">Tim MGMP Informatika · SMP Negeri 19 Kota Bekasi</div>
+    </div>
+    <div class="foot"><span class="dot"></span> Teknologi Informasi dan Komunikasi</div>
+  </section>
+
+  <!-- ================= SLIDE 2 : TUJUAN ================= -->
+  <!-- Catatan Guru: Bacakan tujuan, tekankan bahwa produk akhir adalah 1 artikel blog. -->
+  <section class="slide">
+    <div class="eyebrow">Tujuan Pembelajaran</div>
+    <h2 class="title">Apa yang Akan Kita Kuasai?</h2>
+    <div class="body">
+      <ul class="bullets f">
+        <li>Menjelaskan fungsi CMS untuk publikasi digital.</li>
+        <li>Membuat satu artikel sederhana di Blogger.</li>
+        <li>Menambahkan gambar dan label (metadata).</li>
+        <li>Mencantumkan sumber asli setiap konten.</li>
+      </ul>
+      <div class="grid g2 f">
+        <div class="card">
+          <h3>💡 Pemahaman Bermakna</h3>
+          <p>Menulis di internet bukan sekadar menekan tombol <span class="hl">Publikasikan</span>. Konten kita menjadi jejak digital selamanya.</p>
+        </div>
+        <div class="card blue">
+          <h3>🎯 Profil Pelajar</h3>
+          <p>Penalaran kritis · Kreativitas · Kolaborasi · Kemandirian · Komunikasi · Kewargaan.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 4 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 3 : APERSEPSI ================= -->
+  <!-- Catatan Guru: Tampilkan satu contoh hoaks lokal, minta 2-3 murid menjawab. -->
+  <section class="slide">
+    <div class="eyebrow">Apersepsi</div>
+    <h2 class="title">Pernahkah Kalian Mengalami Ini?</h2>
+    <div class="body">
+      <div class="bubble f">"Pernahkah kalian membaca berita di grup WhatsApp keluarga, lalu ternyata berita itu <b>hoaks</b>?"</div>
+      <div class="grid g3 f">
+        <div class="card gold">
+          <span class="icon">🤔</span>
+          <h3>Siapa penyebarnya?</h3>
+          <p>Siapa orang pertama yang mengunggah berita itu?</p>
+        </div>
+        <div class="card">
+          <span class="icon">📉</span>
+          <h3>Apa dampaknya?</h3>
+          <p>Bagaimana perasaan orang yang dituduh?</p>
+        </div>
+        <div class="card blue">
+          <span class="icon">✅</span>
+          <h3>Bagaimana solusinya?</h3>
+          <p>Bagaimana cara memastikan berita itu benar?</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 5 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 4 : DEFINISI ================= -->
+  <!-- Catatan Guru: Gunakan analogi rumah susun; minta murid menyebutkan "perabotan" versi mereka. -->
+  <section class="slide">
+    <div class="eyebrow">Definisi Konsep</div>
+    <h2 class="title">Apa Itu CMS?</h2>
+    <div class="body">
+      <p class="lead f"><span class="hl">CMS</span> = <i>Content Management System</i>, yaitu perangkat lunak untuk membuat dan mengelola konten web <b>tanpa harus menguasai koding</b>.</p>
+      <div class="grid g2 f">
+        <div class="card">
+          <span class="icon">🧩</span>
+          <h3>Pengertian Sederhana</h3>
+          <ul>
+            <li>Membuat halaman web tanpa menulis HTML.</li>
+            <li>Mengelola tulisan, foto, dan video.</li>
+            <li>Mengubah tampilan dengan tombol, bukan kode.</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <span class="icon">🏢</span>
+          <h3>Analogi: Rumah Susun</h3>
+          <p>Kalian tidak perlu mengaduk semen atau menyusun bata. Cukup membawa perabotan (tulisan, foto, video) lalu menatanya agar indah.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 5 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 5 : CONTOH NYATA ================= -->
+  <!-- Catatan Guru: Tunjukkan tampilan Blogger/Google Sites lewat proyektor. -->
+  <section class="slide">
+    <div class="eyebrow">Contoh Nyata</div>
+    <h2 class="title">CMS di Sekitar Kita</h2>
+    <div class="body">
+      <div class="grid g4 f">
+        <div class="card">
+          <span class="icon">🅱️</span>
+          <h3>Blogger</h3>
+          <p>Dikelola Google. Paling ramah untuk pemula.</p>
+        </div>
+        <div class="card blue">
+          <span class="icon">🌐</span>
+          <h3>WordPress</h3>
+          <p>Fitur lengkap, dipakai banyak situs berita.</p>
+        </div>
+        <div class="card gold">
+          <span class="icon">🗂️</span>
+          <h3>Google Sites</h3>
+          <p>Mudah dipakai untuk tugas sekolah.</p>
+        </div>
+        <div class="card pink">
+          <span class="icon">🏫</span>
+          <h3>Blog Sekolah</h3>
+          <p>Media informasi resmi warga sekolah.</p>
+        </div>
+      </div>
+      <div class="row f">
+        <span class="chip">Login akun Google</span>
+        <span class="chip orange">Gratis</span>
+        <span class="chip blue">Langsung pakai</span>
+        <span class="chip pink">Tanpa koding</span>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 4 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 6 : INTI MATERI ================= -->
+  <!-- Catatan Guru: Tulis tiga kata kunci di papan: Konten, Metadata, Etika. -->
+  <section class="slide">
+    <div class="eyebrow">Inti Materi</div>
+    <h2 class="title">Tiga Pilar Publikasi Digital</h2>
+    <div class="body">
+      <div class="grid g3 f">
+        <div class="card">
+          <span class="icon">✍️</span>
+          <h3>1. Konten</h3>
+          <p>Tulisan dan gambar hasil karya sendiri, ditulis dengan bahasa sendiri.</p>
+        </div>
+        <div class="card blue">
+          <span class="icon">🏷️</span>
+          <h3>2. Metadata</h3>
+          <p>Label atau kategori agar tulisan mudah ditemukan pembaca.</p>
+        </div>
+        <div class="card gold">
+          <span class="icon">⚖️</span>
+          <h3>3. Etika</h3>
+          <p>Mencantumkan sumber, tidak menjiplak, tidak menyebar kebohongan.</p>
+        </div>
+      </div>
+      <p class="lead f">Ketiganya harus ada. Tanpa salah satunya, publikasi kita <span class="hl2">belum bisa dipercaya</span>.</p>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 5 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 7 : METADATA ================= -->
+  <!-- Catatan Guru: Analogikan lemari baju yang dilipat dan diberi label. -->
+  <section class="slide">
+    <div class="eyebrow">Metadata</div>
+    <h2 class="title">Label: Peta untuk Pembaca</h2>
+    <div class="body">
+      <p class="lead f">Metadata adalah <span class="hl">data tentang data</span>. Di blog, metadata berbentuk <b>Label</b> atau <b>Kategori</b>.</p>
+      <div class="code f">Label: Olahraga, Basket, SMPN 19 Bekasi</div>
+      <div class="grid g2 f">
+        <div class="card blue">
+          <h3>🔍 Fungsi</h3>
+          <ul>
+            <li>Memudahkan pembaca menemukan tulisan.</li>
+            <li>Membantu Google mengindeks konten.</li>
+          </ul>
+        </div>
+        <div class="card gold">
+          <h3>🧺 Analogi</h3>
+          <p>Blog tanpa label seperti lemari tanpa lipatan — bajunya ada, tapi susah dicari.</p>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 5 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 8 : ETIKA ================= -->
+  <!-- Catatan Guru: Tekankan bahwa "klik kanan simpan gambar" bukan izin. -->
+  <section class="slide">
+    <div class="eyebrow">Etika Publikasi</div>
+    <h2 class="title">Jangan Ambil Karya Orang Lain</h2>
+    <div class="body">
+      <div class="grid g2 f">
+        <div class="card gold">
+          <h3>©️ Hak Cipta</h3>
+          <p>Setiap foto, tulisan, dan video di internet memiliki pemilik. Wajib minta izin atau cantumkan sumber.</p>
+        </div>
+        <div class="card pink">
+          <h3>🚫 Plagiarisme</h3>
+          <p>Mengambil tulisan orang lain lalu mengakuinya sebagai karya sendiri.</p>
+        </div>
+      </div>
+      <div class="code f">Sumber gambar: Dokumentasi OSIS SMPN 19 Bekasi
+Sumber teks: https://www.bekasikota.go.id/sejarah</div>
+      <div class="row f">
+        <span class="chip">Baca dulu</span>
+        <span class="chip orange">Tulis ulang (parafrasa)</span>
+        <span class="chip blue">Cantumkan tautan</span>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 6 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 9 : CARA KERJA ================= -->
+  <!-- Catatan Guru: Demonstrasikan langsung di proyektor langkah demi langkah. -->
+  <section class="slide">
+    <div class="eyebrow">Urutan Logika</div>
+    <h2 class="title">Alur Kerja CMS</h2>
+    <div class="body">
+      <ol class="steps f">
+        <li><b>Masuk</b> memakai akun Google (Gmail).</li>
+        <li><b>Buat blog baru</b> dan beri nama.</li>
+        <li>Klik <b>Entri Baru</b> (tanda tambah).</li>
+        <li>Tulis <b>judul</b> dan isi artikel.</li>
+        <li><b>Sisipkan gambar</b> beserta sumbernya.</li>
+        <li>Tambah <b>label</b>, lalu <b>Publikasikan</b>.</li>
+      </ol>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 6 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 10 : TABEL ================= -->
+  <!-- Catatan Guru: Bimbing murid memilih platform yang tersedia di lab. -->
+  <section class="slide">
+    <div class="eyebrow">Perbandingan</div>
+    <h2 class="title">Memilih Platform CMS</h2>
+    <div class="body">
+      <table class="f">
+        <thead>
+          <tr><th>Platform</th><th>Kemudahan</th><th>Cocok Untuk</th><th>Cara Masuk</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Blogger</td><td>Sangat mudah</td><td>Pemula, tugas sekolah</td><td>Akun Google</td></tr>
+          <tr><td>WordPress.com</td><td>Sedang</td><td>Blog serius, portofolio</td><td>Email sendiri</td></tr>
+          <tr><td>Google Sites</td><td>Sangat mudah</td><td>Laporan proyek kelompok</td><td>Akun Google</td></tr>
+          <tr><td>CMS Sekolah</td><td>Sedang</td><td>Informasi resmi sekolah</td><td>Akun admin</td></tr>
+        </tbody>
+      </table>
+      <p class="lead f">Pilih yang paling <span class="hl3">kalian kuasai</span>, bukan yang paling terkenal.</p>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 4 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 11 : FLOWCHART ================= -->
+  <!-- Catatan Guru: Minta murid membaca alur dari atas ke bawah bersama-sama. -->
+  <section class="slide">
+    <div class="eyebrow">Flowchart</div>
+    <h2 class="title">Alur Publikasi Beretika</h2>
+    <div class="body">
+      <div class="flow f">
+        <div class="node oval">Mulai</div>
+        <div class="arrow">▼</div>
+        <div class="node diamond"><span>Ada gambar orang lain?</span></div>
+        <div class="branches">
+          <div class="branchLabel y">Ya → Tulis sumber gambar</div>
+          <div class="branchLabel n">Tidak → Lanjut menulis</div>
+        </div>
+        <div class="arrow">▼</div>
+        <div class="node">Tambah minimal 2 label</div>
+        <div class="arrow">▼</div>
+        <div class="node">Pratinjau lalu Publikasikan</div>
+        <div class="arrow">▼</div>
+        <div class="node oval">Selesai</div>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 5 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 12 : KODE ================= -->
+  <!-- Catatan Guru: Tunjukkan bahwa struktur HTML di CMS sebenarnya otomatis. -->
+  <section class="slide">
+    <div class="eyebrow">Kode Program</div>
+    <h2 class="title">Struktur Artikel di Balik Layar</h2>
+    <div class="body">
+      <div class="code sm f"><span class="c">&lt;!-- yang dibuat CMS secara otomatis --&gt;</span>
+<span class="k">&lt;article&gt;</span>
+  <span class="k">&lt;h1&gt;</span>Eskul Paskibra SMPN 19 Bekasi<span class="k">&lt;/h1&gt;</span>
+
+  <span class="k">&lt;img</span> src=<span class="s">"paskibra.jpg"</span> alt=<span class="s">"Latihan Paskibra"</span><span class="k">&gt;</span>
+  <span class="k">&lt;p&gt;&lt;em&gt;</span>Sumber: Dokumentasi OSIS SMPN 19<span class="k">&lt;/em&gt;&lt;/p&gt;</span>
+
+  <span class="k">&lt;p&gt;</span>Paskibra melatih kedisiplinan kami setiap Jumat.<span class="k">&lt;/p&gt;</span>
+
+  <span class="k">&lt;p&gt;</span>Label: Sekolah, Ekstrakurikuler<span class="k">&lt;/p&gt;</span>
+<span class="k">&lt;/article&gt;</span></div>
+      <div class="row f">
+        <span class="chip">Judul</span>
+        <span class="chip blue">Gambar</span>
+        <span class="chip orange">Sumber</span>
+        <span class="chip pink">Label</span>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 6 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 13 : KESALAHAN UMUM ================= -->
+  <!-- Catatan Guru: Tanyakan murid mana yang pernah melakukan hal ini. -->
+  <section class="slide">
+    <div class="eyebrow">Peringatan</div>
+    <h2 class="title">Kesalahan yang Sering Terjadi</h2>
+    <div class="body">
+      <div class="grid g2 f">
+        <div class="card pink">
+          <h3>❌ Salah</h3>
+          <ul>
+            <li>Copy-paste utuh dari Wikipedia.</li>
+            <li>Mengambil gambar tanpa sumber.</li>
+            <li>Tidak memberi label apa pun.</li>
+            <li>Menulis judul yang menyesatkan.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>✅ Benar</h3>
+          <ul>
+            <li>Menulis ulang dengan bahasa sendiri.</li>
+            <li>Mencantumkan tautan sumber asli.</li>
+            <li>Memberi 2–3 label relevan.</li>
+            <li>Judul sesuai isi tulisan.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="lead f">Satu kali <span class="hl2">copy-paste</span>, reputasi digital bisa rusak lama.</p>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 5 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 14 : ANALOGI ================= -->
+  <!-- Catatan Guru: Gunakan analogi ini untuk murid yang masih bingung. -->
+  <section class="slide">
+    <div class="eyebrow">Analogi Tambahan</div>
+    <h2 class="title">Bayangkan Dua Hal Ini</h2>
+    <div class="body">
+      <div class="grid g2 f">
+        <div class="card blue">
+          <h3>🏷️ Label = Etalase Toko</h3>
+          <p>Barang tanpa label membuat pembeli bingung. Tulisan tanpa label membuat pembaca tersesat.</p>
+        </div>
+        <div class="card gold">
+          <h3>📄 Copy-paste = Menjiplak PR</h3>
+          <p>Nilainya bisa sama, tapi kejujurannya nol. Guru tahu, dan internet juga tahu.</p>
+        </div>
+      </div>
+      <div class="code f">Konten sendiri + sumber jelas = kepercayaan pembaca</div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 4 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 15 : STUDI KASUS ================= -->
+  <!-- Catatan Guru: Bacakan kronologi, minta murid menyimpulkan pelajarannya. -->
+  <section class="slide">
+    <div class="eyebrow">Studi Kasus Lokal</div>
+    <h2 class="title">Blog "Sejarah Stasiun Bekasi"</h2>
+    <div class="body">
+      <div class="timeline f">
+        <div class="tl">Seorang siswa di Bekasi membuat tugas blog tentang <b>Sejarah Stasiun Bekasi</b>.</div>
+        <div class="tl bad">Ia <b>menyalin-tempel</b> seluruh teks dari blog orang lain tanpa sumber.</div>
+        <div class="tl bad">Saat dicek aplikasi pendeteksi plagiasi, skor kemiripan <b>100%</b>.</div>
+        <div class="tl good">Yang benar: baca, <b>tulis ulang</b> dengan bahasa sendiri, cantumkan tautan sumber.</div>
+      </div>
+      <p class="lead f">Kesimpulan: <span class="hl">Menulis ulang</span> bukan pekerjaan sia-sia, itu bukti kejujuran.</p>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 5 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 16 : AKTIVITAS KELOMPOK ================= -->
+  <!-- Catatan Guru: Bagi kelas menjadi pasangan (1 komputer 2 anak). -->
+  <section class="slide">
+    <div class="eyebrow">Aktivitas Kelompok</div>
+    <h2 class="title">Misi: Jurnalis Sekolah Digital!</h2>
+    <div class="body">
+      <p class="lead f">Pilih <b>satu topik</b> untuk artikel kalian hari ini:</p>
+      <div class="grid g4 f">
+        <div class="card"><span class="icon">🍜</span><h3>Kantin</h3><p>Menu favorit dan kebersihannya.</p></div>
+        <div class="card blue"><span class="icon">🏕️</span><h3>Pramuka</h3><p>Kegiatan dan nilai kedisiplinan.</p></div>
+        <div class="card gold"><span class="icon">⚽</span><h3>Lapangan</h3><p>Fasilitas olahraga sekolah.</p></div>
+        <div class="card pink"><span class="icon">🎨</span><h3>Kelas Kami</h3><p>Suasana dan kegiatan kelas.</p></div>
+      </div>
+      <div class="row f">
+        <span class="chip">Kerja berpasangan</span>
+        <span class="chip orange">1 komputer 2 anak</span>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 3 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 17 : LANGKAH KERJA ================= -->
+  <!-- Catatan Guru: Berkeliling memberi bimbingan fasilitatif. -->
+  <section class="slide">
+    <div class="eyebrow">Langkah Kerja</div>
+    <h2 class="title">Panduan Praktik di Lab Komputer</h2>
+    <div class="body">
+      <ol class="steps f">
+        <li>Buka <b>Chrome</b>, kunjungi <b>blogger.com</b>.</li>
+        <li>Masuk dengan akun <b>Google</b> kalian.</li>
+        <li>Buat nama blog, lalu klik <b>Entri Baru</b>.</li>
+        <li>Tulis <b>2 paragraf</b> dengan bahasa sendiri.</li>
+        <li>Sisipkan <b>gambar</b> + tulis sumbernya.</li>
+        <li>Tambahkan <b>2 label</b>, cek <b>Pratinjau</b>, lalu <b>Publikasikan</b>.</li>
+      </ol>
+      <div class="row f">
+        <span class="chip">Minimal 2 paragraf</span>
+        <span class="chip blue">1 gambar + sumber</span>
+        <span class="chip orange">2 label</span>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 25 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 18 : KUIS KILAT ================= -->
+  <!-- Catatan Guru: Klik untuk memunculkan jawaban setelah murid menjawab. -->
+  <section class="slide">
+    <div class="eyebrow">Cek Pemahaman</div>
+    <h2 class="title">Kuis Kilat</h2>
+    <div class="body">
+      <div class="card f">
+        <h3>1. Apa fungsi label pada blog?</h3>
+        <p class="f">→ Memudahkan pembaca dan mesin pencari menemukan tulisan kita.</p>
+      </div>
+      <div class="card blue f">
+        <h3>2. Bolehkah memakai foto dari internet?</h3>
+        <p class="f">→ Boleh, jika mencantumkan sumber atau berlisensi bebas (Creative Commons).</p>
+      </div>
+      <div class="card gold f">
+        <h3>3. Apa itu plagiarisme?</h3>
+        <p class="f">→ Mengambil karya orang lain dan mengakuinya sebagai karya sendiri.</p>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 5 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 19 : REFLEKTIF ================= -->
+  <!-- Catatan Guru: Bisa lisan atau ditulis di kertas (Exit Ticket). -->
+  <section class="slide">
+    <div class="eyebrow">Aktivitas Reflektif</div>
+    <h2 class="title">Renungkan Sejenak</h2>
+    <div class="body">
+      <div class="grid g3 f">
+        <div class="card">
+          <span class="icon">🧠</span>
+          <h3>Tantangan</h3>
+          <p>Apa bagian tersulit saat membuat blog tadi?</p>
+        </div>
+        <div class="card blue">
+          <span class="icon">🔗</span>
+          <h3>Sumber</h3>
+          <p>Mengapa mencantumkan sumber itu penting?</p>
+        </div>
+        <div class="card pink">
+          <span class="icon">🚀</span>
+          <h3>Rencana</h3>
+          <p>Apakah kalian ingin menulis lagi di luar jam sekolah?</p>
+        </div>
+      </div>
+      <p class="lead f"><span class="hl2">Exit Ticket:</span> tulis satu kalimat baru yang kalian sadari tentang etika publikasi.</p>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 5 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 20 : RUBRIK ================= -->
+  <!-- Catatan Guru: Sampaikan rubrik sebelum penilaian agar murid tahu targetnya. -->
+  <section class="slide">
+    <div class="eyebrow">Rubrik Penilaian</div>
+    <h2 class="title">Bagaimana Karya Kalian Dinilai?</h2>
+    <div class="body">
+      <table class="sm f">
+        <thead>
+          <tr><th>Komponen</th><th>1 · Perlu Bimbingan</th><th>2 · Cukup</th><th>3 · Baik</th><th>4 · Sangat Baik</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Pengetahuan CMS &amp; Metadata</b></td><td>Belum paham, tanpa label</td><td>Label kurang relevan</td><td>Label relevan</td><td>Metadata spesifik &amp; membantu</td></tr>
+          <tr><td><b>Keterampilan Produk</b></td><td>Belum berhasil publikasi</td><td>Kurang rapi</td><td>Rapi</td><td>Rapi + format teks tepat</td></tr>
+          <tr><td><b>Kolaborasi</b></td><td>Bekerja sendiri</td><td>Dominasi satu pihak</td><td>Berbagi tugas</td><td>Aktif saling membantu</td></tr>
+          <tr><td><b>Etika &amp; Anti-Plagiasi</b></td><td>Copy-paste total</td><td>Lupa sumber</td><td>Sumber jelas</td><td>Orisinil + analisis kritis</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 3 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 21 : RANGKUMAN ================= -->
+  <!-- Catatan Guru: Minta murid menyebutkan satu poin yang paling berkesan. -->
+  <section class="slide">
+    <div class="eyebrow">Rangkuman</div>
+    <h2 class="title">Poin Penting Hari Ini</h2>
+    <div class="body">
+      <ul class="bullets gold f">
+        <li>CMS memudahkan publikasi tanpa koding.</li>
+        <li>Label membantu pembaca menemukan tulisan.</li>
+        <li>Setiap konten wajib mencantumkan sumber.</li>
+        <li>Plagiarisme merusak kepercayaan dan reputasi.</li>
+        <li>Teknologi memudahkan, karakter yang menentukan.</li>
+      </ul>
+      <p class="lead f">Konten yang baik = <span class="hl">karya sendiri</span> + <span class="hl3">sumber jelas</span> + <span class="hl2">label rapi</span>.</p>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 4 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 22 : TINDAK LANJUT ================= -->
+  <!-- Catatan Guru: Pastikan setiap murid mencatat tugas rumah. -->
+  <section class="slide">
+    <div class="eyebrow">Tindak Lanjut</div>
+    <h2 class="title">Setelah Pertemuan Ini</h2>
+    <div class="body">
+      <div class="grid g2 f">
+        <div class="card gold">
+          <span class="icon">📝</span>
+          <h3>Tugas Rumah</h3>
+          <ul>
+            <li>Sempurnakan artikel blog kalian.</li>
+            <li>Tambahkan 1 gambar bersumber jelas.</li>
+            <li>Kirim tautan blog lewat Google Classroom.</li>
+          </ul>
+        </div>
+        <div class="card blue">
+          <span class="icon">➡️</span>
+          <h3>Pertemuan Berikutnya</h3>
+          <ul>
+            <li>Kolaborasi dokumen daring.</li>
+            <li>Berbagi peran dalam tim digital.</li>
+            <li>Mengelola komentar dan umpan balik.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Estimasi: 3 menit</div>
+  </section>
+
+  <!-- ================= SLIDE 23 : PENUTUP ================= -->
+  <!-- Catatan Guru: Tutup dengan doa dan salam. -->
+  <section class="slide">
+    <div class="cover-inner">
+      <div class="eyebrow f" style="justify-content:center">Penutup</div>
+      <h1 class="title grad f">Terima Kasih</h1>
+      <p class="sub f">Tim MGMP Informatika · SMP Negeri 19 Kota Bekasi</p>
+      <div class="f badge">Jejak digitalmu adalah cerminan karaktermu — tulislah dengan jujur.</div>
+      <div class="row f">
+        <span class="chip">Informatika Kelas IX</span>
+        <span class="chip blue">Fase D</span>
+        <span class="chip orange">CMS &amp; Etika Publikasi</span>
+      </div>
+    </div>
+    <div class="foot"><span class="dot"></span> Selesai · Terima kasih</div>
+  </section>
+
+</div>
+
+<div id="hud"><span id="counter">1 / 23</span></div>
+<div id="bar"><i></i></div>
+<div id="hint">Klik / tekan → untuk lanjut</div>
+<div class="ctrl">
+  <button id="prev" title="Sebelumnya (←)">◀</button>
+  <button id="next" title="Berikutnya (→)">▶</button>
+  <button id="fs" title="Layar penuh (F)">⛶</button>
+</div>
+
+<script>
+(function(){
+  const stage   = document.getElementById('stage');
+  const slides  = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  const counter = document.getElementById('counter');
+  const bar     = document.querySelector('#bar i');
+  const hint    = document.getElementById('hint');
+  const N       = slides.length;
+  const anims   = ['a0','a1','a2','a3','a4','a5','a6','a7'];
+  let idx = 0;
+
+  function fit(){
+    const s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    stage.style.setProperty('--s', s);
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  function updateHUD(){
+    counter.textContent = (idx + 1) + ' / ' + N;
+    bar.style.width = ((idx + 1) / N * 100) + '%';
+    if(idx === 0){ hint.classList.remove('hide'); } else { hint.classList.add('hide'); }
+  }
+
+  function go(back){
+    slides.forEach(function(s, k){
+      if(k !== idx){ s.classList.remove('active'); }
+      s.classList.remove.apply(s.classList, anims);
+    });
+    const cur = slides[idx];
+    void cur.offsetWidth;
+    cur.classList.add('active', anims[idx % anims.length]);
+
+    if(back){
+      cur.querySelectorAll('.f').forEach(function(f){ f.classList.add('show'); });
+    } else {
+      cur.querySelectorAll('.f').forEach(function(f){ f.classList.remove('show'); });
+    }
+    updateHUD();
+  }
+
+  function next(){
+    const cur = slides[idx];
+    const hidden = cur.querySelectorAll('.f:not(.show)');
+    if(hidden.length){
+      hidden[0].classList.add('show');
+      return;
+    }
+    if(idx < N - 1){ idx++; go(false); }
+  }
+
+  function prev(){
+    const cur = slides[idx];
+    const shown = cur.querySelectorAll('.f.show');
+    if(shown.length){
+      shown[shown.length - 1].classList.remove('show');
+      return;
+    }
+    if(idx > 0){ idx--; go(true); }
+  }
+
+  function first(){ idx = 0; go(false); }
+  function last(){ idx = N - 1; go(true); }
+
+  function toggleFS(){
+    if(!document.fullscreenElement){
+      (document.documentElement.requestFullscreen ||
+       document.documentElement.webkitRequestFullscreen ||
+       function(){}).call(document.documentElement);
+    } else {
+      (document.exitFullscreen ||
+       document.webkitExitFullscreen ||
+       function(){}).call(document);
+    }
+  }
+
+  document.addEventListener('click', function(e){
+    if(e.target.closest('.ctrl')) return;
+    next();
+  });
+
+  document.addEventListener('keydown', function(e){
+    const k = e.key;
+    if(k === 'ArrowRight' || k === 'ArrowDown' || k === ' ' || k === 'PageDown' || k === 'Enter'){
+      e.preventDefault(); next();
+    } else if(k === 'ArrowLeft' || k === 'ArrowUp' || k === 'PageUp'){
+      e.preventDefault(); prev();
+    } else if(k === 'Home'){ e.preventDefault(); first(); }
+    else if(k === 'End'){ e.preventDefault(); last(); }
+    else if(k === 'f' || k === 'F'){ e.preventDefault(); toggleFS(); }
+  });
+
+  document.getElementById('next').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prev').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
+  document.getElementById('fs').addEventListener('click', function(e){ e.stopPropagation(); toggleFS(); });
+
+  document.addEventListener('mousemove', function(e){
+    const mx = (e.clientX / window.innerWidth) * 100;
+    const my = (e.clientY / window.innerHeight) * 100;
+    stage.style.setProperty('--mx', mx + '%');
+    stage.style.setProperty('--my', my + '%');
+  });
+
+  /* mulai */
+  slides[0].classList.add('active', 'a0');
+  updateHUD();
+})();
+</script>
+</body>
+</html>
